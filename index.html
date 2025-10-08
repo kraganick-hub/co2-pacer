@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetany Symptom Relief Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .breathing-circle {
+            transition: transform 3s ease-in-out, box-shadow 1.5s ease-in-out;
+        }
+        #human-body-svg .body-part {
+            transition: fill 0.3s ease-in-out;
+            cursor: pointer;
+        }
+        #human-body-svg .body-part:hover {
+            fill: rgba(34, 211, 238, 0.6); /* cyan-400 with opacity */
+        }
+        #human-body-svg .body-part.active {
+            fill: rgba(34, 211, 238, 1); /* solid cyan-400 */
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+        }
+        .main-card {
+            background-color: rgba(29, 39, 58, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px 0 rgba(99, 102, 241, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px 0 rgba(99, 102, 241, 0.4);
+        }
+        .btn-secondary {
+             background: linear-gradient(to right, #14b8a6, #22d3ee);
+             transition: all 0.3s ease;
+             box-shadow: 0 4px 15px 0 rgba(20, 184, 166, 0.3);
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px 0 rgba(20, 184, 166, 0.4);
+        }
+        /* Style for right-to-left languages like Arabic */
+        [dir="rtl"] .text-left { text-align: right; }
+        [dir="rtl"] .flex-items-start { align-items: flex-start; }
+        [dir="rtl"] .mr-3 { margin-right: 0; margin-left: 0.75rem; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-gray-900 to-slate-900 text-gray-200 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md mx-auto">
+
+        <!-- Page 1: CO₂ Balance Pacer -->
+        <div id="page1" class="">
+            <div class="main-card rounded-2xl shadow-2xl p-6 md:p-8 text-center">
+                <h1 data-translate="co2_title" class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 mb-2">CO₂ Balance Pacer</h1>
+                <p data-translate="co2_subtitle" class="text-gray-400 mb-6">Counteract hyperventilation with guided breathing.</p>
+
+                <div class="flex items-center justify-center w-48 h-48 md:w-64 md:h-64 mx-auto my-8">
+                    <div id="breathing-circle" class="breathing-circle bg-gray-800 rounded-full w-24 h-24 flex items-center justify-center" style="box-shadow: 0 0 0 10px rgba(59, 130, 246, 0.3);">
+                        <span id="breathing-text" data-translate-dynamic="breathing_ready" class="text-white text-2xl font-semibold">Ready</span>
+                    </div>
+                </div>
+
+                <!-- Premium Customization -->
+                <div id="premium-feature-lock" class="cursor-pointer border border-slate-700 rounded-lg p-4 relative mb-6">
+                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-slate-700 px-3 py-0.5 rounded-full text-xs font-semibold text-amber-300 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3> 10-6 0V9h6z" clip-rule="evenodd" /></svg>
+                        <span data-translate="premium_feature">PREMIUM FEATURE</span>
+                    </div>
+                    <div id="breathing-controls" class="grid grid-cols-3 gap-3 mt-4 opacity-40">
+                        <div>
+                            <label for="inhale-time" data-translate="inhale_label" class="block text-sm font-medium text-gray-400">Inhale (s)</label>
+                            <input type="number" id="inhale-time" value="4" disabled class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-lg shadow-sm py-2 px-3 text-white">
+                        </div>
+                        <div>
+                            <label for="hold-time" data-translate="hold_label" class="block text-sm font-medium text-gray-400">Hold (s)</label>
+                            <input type="number" id="hold-time" value="4" disabled class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-lg shadow-sm py-2 px-3 text-white">
+                        </div>
+                        <div>
+                            <label for="exhale-time" data-translate="exhale_label" class="block text-sm font-medium text-gray-400">Exhale (s)</label>
+                            <input type="number" id="exhale-time" value="6" disabled class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-lg shadow-sm py-2 px-3 text-white">
+                        </div>
+                    </div>
+                    <p id="upgrade-prompt-text" data-translate="upgrade_breathing" class="text-amber-400 text-sm mt-3">Upgrade to customize breathing times.</p>
+                </div>
+                
+                <button id="start-button" data-translate-dynamic="start_breathing_button" class="w-full btn-primary text-white font-bold py-3 px-4 rounded-lg mb-4 text-lg">
+                    Start 4-4-6 Breathing
+                </button>
+                
+                 <button onclick="showPage('page2')" data-translate="try_scanner" class="mt-6 text-cyan-400 hover:text-cyan-300 transition-colors">Try the Somatic Muscle Scanner &rarr;</button>
+            </div>
+        </div>
+
+        <!-- Page 2: Somatic Muscle Scanner -->
+        <div id="page2" class="hidden">
+            <div class="main-card rounded-2xl shadow-2xl p-6 md:p-8 text-center">
+                <h1 data-translate="scanner_title" class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-cyan-400 mb-2">Somatic Muscle Scanner</h1>
+                <p data-translate="scanner_subtitle" class="text-gray-400 mb-4">Release tension with guided relaxation.</p>
+
+                <div id="scanner-instruction" data-translate-dynamic="scanner_instruction_initial" class="h-16 flex items-center justify-center bg-slate-800/70 border border-slate-700 rounded-lg mb-4 px-4 text-cyan-300">
+                    Tap a body part or start the guided scan.
+                </div>
+
+                <div class="mb-4">
+                    <label for="voice-select" data-translate="select_voice" class="block text-sm font-medium text-gray-400 mb-1">Select Voice:</label>
+                    <select id="voice-select" class="w-full bg-slate-700 border border-slate-600 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                    </select>
+                </div>
+                
+                <div class="flex justify-center my-4">
+                    <svg id="human-body-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 400" class="h-64 md:h-80 w-auto">
+                        <circle data-part="head" class="body-part" fill="#475569" cx="100" cy="40" r="30"/><rect data-part="torso" class="body-part" fill="#475569" x="70" y="70" width="60" height="120" rx="10"/><rect data-part="left_arm" class="body-part" fill="#475569" x="40" y="75" width="25" height="100" rx="10"/><circle data-part="left_hand" class="body-part" fill="#475569" cx="52.5" cy="185" r="15"/><rect data-part="right_arm" class="body-part" fill="#475569" x="135" y="75" width="25" height="100" rx="10"/><circle data-part="right_hand" class="body-part" fill="#475569" cx="147.5" cy="185" r="15"/><rect data-part="left_leg" class="body-part" fill="#475569" x="70" y="190" width="25" height="130" rx="10"/><ellipse data-part="left_foot" class="body-part" fill="#475569" cx="82.5" cy="330" rx="18" ry="10"/><rect data-part="right_leg" class="body-part" fill="#475569" x="105" y="190" width="25" height="130" rx="10"/><ellipse data-part="right_foot" class="body-part" fill="#475569" cx="117.5" cy="330" rx="18" ry="10"/>
+                    </svg>
+                </div>
+                
+                <button id="start-scan-button" data-translate="start_guided_scan" class="w-full btn-secondary text-white font-bold py-3 px-4 rounded-lg mb-4 text-lg">Start Guided Scan</button>
+                <button id="stop-scan-button" data-translate="stop_scan" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 hidden">Stop Scan</button>
+
+                 <button onclick="showPage('page1')" data-translate="back_to_pacer" class="mt-6 text-indigo-400 hover:text-indigo-300 transition-colors">&larr; Back to CO₂ Balance Pacer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upgrade Modal -->
+    <div id="upgrade-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 hidden z-50">
+        <div class="main-card rounded-2xl shadow-2xl p-8 text-center max-w-sm w-full transform transition-all" id="modal-content">
+            <h2 data-translate="upgrade_title" class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-orange-400 mb-4">Upgrade to Premium</h2>
+            <p data-translate="upgrade_subtitle" class="text-gray-300 mb-6">Unlock powerful features to enhance your relaxation journey.</p>
+            <ul class="text-left space-y-3 mb-8">
+                <li class="flex items-start"><span class="text-amber-400 mr-3 mt-1">&#10003;</span> <span data-translate="feature_breathing"><b>Custom Breathing Times:</b> Adjust inhale, hold, and exhale durations to match your comfort level.</span></li>
+                <li class="flex items-start"><span class="text-amber-400 mr-3 mt-1">&#10003;</span> <span data-translate="feature_sessions"><b>More Guided Sessions:</b> Access a library of specialized relaxation and meditation exercises.</span></li>
+                <li class="flex items-start"><span class="text-amber-400 mr-3 mt-1">&#10003;</span> <span data-translate="feature_progress"><b>Track Your Progress:</b> Monitor your sessions and see your consistency over time.</span></li>
+            </ul>
+            <button id="upgrade-now-button" data-translate="upgrade_now" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-3 px-4 rounded-lg transition-colors duration-300 mb-4 text-lg">
+                Upgrade Now
+            </button>
+            <button id="close-modal-button" data-translate="maybe_later" class="text-gray-500 hover:text-gray-300">Maybe later</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Multilingual & App Communication Logic ---
+        let currentLang = 'en';
+        let isPremium = false;
+
+        const translations = {
+            // English (en)
+            en: {
+                co2_title: 'CO₂ Balance Pacer',
+                co2_subtitle: 'Counteract hyperventilation with guided breathing.',
+                premium_feature: 'PREMIUM FEATURE',
+                inhale_label: 'Inhale (s)',
+                hold_label: 'Hold (s)',
+                exhale_label: 'Exhale (s)',
+                upgrade_breathing: 'Upgrade to customize breathing times.',
+                start_breathing_button: 'Start 4-4-6 Breathing',
+                try_scanner: 'Try the Somatic Muscle Scanner →',
+                scanner_title: 'Somatic Muscle Scanner',
+                scanner_subtitle: 'Release tension with guided relaxation.',
+                scanner_instruction_initial: 'Tap a body part or start the guided scan.',
+                select_voice: 'Select Voice:',
+                start_guided_scan: 'Start Guided Scan',
+                stop_scan: 'Stop Scan',
+                back_to_pacer: '← Back to CO₂ Balance Pacer',
+                upgrade_title: 'Upgrade to Premium',
+                upgrade_subtitle: 'Unlock powerful features to enhance your relaxation journey.',
+                feature_breathing: '<b>Custom Breathing Times:</b> Adjust inhale, hold, and exhale durations to match your comfort level.',
+                feature_sessions: '<b>More Guided Sessions:</b> Access a library of specialized relaxation and meditation exercises.',
+                feature_progress: '<b>Track Your Progress:</b> Monitor your sessions and see your consistency over time.',
+                upgrade_now: 'Upgrade Now',
+                maybe_later: 'Maybe later',
+                breathing_ready: 'Ready',
+                breathing_inhale: 'Inhale',
+                breathing_hold: 'Hold',
+                breathing_exhale: 'Exhale',
+                breathing_paused: 'Paused',
+                scanner_scan_complete: 'Guided scan complete.',
+                scanner_scan_stopped: 'Scan stopped. Tap a body part to focus.',
+            },
+            // Slovak (sk)
+            sk: {
+                co2_title: 'CO₂ Balančný Dych',
+                co2_subtitle: 'Pôsobte proti hyperventilácii s riadeným dýchaním.',
+                premium_feature: 'PRÉMIOVÁ FUNKCIA',
+                inhale_label: 'Nádych (s)',
+                hold_label: 'Zadržanie (s)',
+                exhale_label: 'Výdych (s)',
+                upgrade_breathing: 'Inovujte na prispôsobenie časov dýchania.',
+                start_breathing_button: 'Začať 4-4-6 Dýchanie',
+                try_scanner: 'Vyskúšajte Somatický Svalový Skener →',
+                scanner_title: 'Somatický Svalový Skener',
+                scanner_subtitle: 'Uvoľnite napätie s riadenou relaxáciou.',
+                scanner_instruction_initial: 'Klepnite na časť tela alebo začnite riadené skenovanie.',
+                select_voice: 'Vyberte Hlas:',
+                start_guided_scan: 'Začať Riadené Skenovanie',
+                stop_scan: 'Zastaviť Skenovanie',
+                back_to_pacer: '← Späť na CO₂ Balančný Dych',
+                upgrade_title: 'Inovovať na Prémium',
+                upgrade_subtitle: 'Odomknite výkonné funkcie na zlepšenie vašej relaxačnej cesty.',
+                feature_breathing: '<b>Vlastné časy dýchania:</b> Prispôsobte dĺžku nádychu, zadržania a výdychu vašej úrovni pohodlia.',
+                feature_sessions: '<b>Viac riadených sedení:</b> Získajte prístup ku knižnici špecializovaných relaxačných a meditačných cvičení.',
+                feature_progress: '<b>Sledujte svoj pokrok:</b> Monitorujte svoje sedenia a sledujte svoju konzistentnosť v priebehu času.',
+                upgrade_now: 'Inovovať Teraz',
+                maybe_later: 'Možno neskôr',
+                breathing_ready: 'Pripravený',
+                breathing_inhale: 'Nádych',
+                breathing_hold: 'Zadrž',
+                breathing_exhale: 'Výdych',
+                breathing_paused: 'Pozastavené',
+                scanner_scan_complete: 'Riadené skenovanie dokončené.',
+                scanner_scan_stopped: 'Skenovanie zastavené. Klepnite na časť tela na zameranie.',
+            },
+            // Hungarian (hu)
+            hu: {
+                co2_title: 'CO₂ Egyensúly Pacer',
+                co2_subtitle: 'Ellensúlyozza a hiperventilációt irányított légzéssel.',
+                premium_feature: 'PRÉMIUM FUNKCIÓ',
+                inhale_label: 'Belégzés (s)',
+                hold_label: 'Tartás (s)',
+                exhale_label: 'Kilégzés (s)',
+                upgrade_breathing: 'Frissítsen a légzési idők testreszabásához.',
+                start_breathing_button: '4-4-6 Légzés Indítása',
+                try_scanner: 'Próbálja ki a Szomatikus Izom Scannert →',
+                scanner_title: 'Szomatikus Izom Scanner',
+                scanner_subtitle: 'Engedje el a feszültséget irányított relaxációval.',
+                scanner_instruction_initial: 'Érintsen meg egy testrészt, vagy indítsa el az irányított szkennelést.',
+                select_voice: 'Válasszon Hangot:',
+                start_guided_scan: 'Irányított Szkennelés Indítása',
+                stop_scan: 'Szkennelés Leállítása',
+                back_to_pacer: '← Vissza a CO₂ Egyensúly Pacerhez',
+                upgrade_title: 'Frissítés Prémiumra',
+                upgrade_subtitle: 'Oldja fel a hatékony funkciókat a relaxációs utazás fokozásához.',
+                feature_breathing: '<b>Egyedi légzési idők:</b> Állítsa be a belégzés, tartás és kilégzés időtartamát a kényelmének megfelelően.',
+                feature_sessions: '<b>Több irányított foglalkozás:</b> Hozzáférés a specializált relaxációs és meditációs gyakorlatok könyvtárához.',
+                feature_progress: '<b>Kövesse nyomon a haladását:</b> Figyelje a foglalkozásait és lássa a következetességét az idő múlásával.',
+                upgrade_now: 'Frissítés Most',
+                maybe_later: 'Talán később',
+                breathing_ready: 'Kész',
+                breathing_inhale: 'Belégzés',
+                breathing_hold: 'Tart',
+                breathing_exhale: 'Kilégzés',
+                breathing_paused: 'Szünetel',
+                scanner_scan_complete: 'Az irányított szkennelés befejeződött.',
+                scanner_scan_stopped: 'Szkennelés leállítva. Érintsen meg egy testrészt a fókuszáláshoz.',
+            },
+            // German (de)
+            de: {
+                co2_title: 'CO₂-Balance-Pacer',
+                co2_subtitle: 'Wirken Sie der Hyperventilation mit geführter Atmung entgegen.',
+                premium_feature: 'PREMIUM-FUNKTION',
+                inhale_label: 'Einatmen (s)',
+                hold_label: 'Halten (s)',
+                exhale_label: 'Ausatmen (s)',
+                upgrade_breathing: 'Upgraden Sie, um die Atemzeiten anzupassen.',
+                start_breathing_button: '4-4-6 Atmung starten',
+                try_scanner: 'Probieren Sie den Somatic Muscle Scanner →',
+                scanner_title: 'Somatic Muscle Scanner',
+                scanner_subtitle: 'Lösen Sie Verspannungen mit geführter Entspannung.',
+                scanner_instruction_initial: 'Tippen Sie auf einen Körperteil oder starten Sie den geführten Scan.',
+                select_voice: 'Stimme auswählen:',
+                start_guided_scan: 'Geführten Scan starten',
+                stop_scan: 'Scan stoppen',
+                back_to_pacer: '← Zurück zum CO₂-Balance-Pacer',
+                upgrade_title: 'Upgrade auf Premium',
+                upgrade_subtitle: 'Schalten Sie leistungsstarke Funktionen frei, um Ihre Entspannungsreise zu verbessern.',
+                feature_breathing: '<b>Benutzerdefinierte Atemzeiten:</b> Passen Sie die Dauer von Einatmen, Halten und Ausatmen an Ihr Komfortniveau an.',
+                feature_sessions: '<b>Mehr geführte Sitzungen:</b> Greifen Sie auf eine Bibliothek spezialisierter Entspannungs- und Meditationsübungen zu.',
+                feature_progress: '<b>Verfolgen Sie Ihren Fortschritt:</b> Überwachen Sie Ihre Sitzungen und sehen Sie Ihre Beständigkeit im Laufe der Zeit.',
+                upgrade_now: 'Jetzt upgraden',
+                maybe_later: 'Vielleicht später',
+                breathing_ready: 'Bereit',
+                breathing_inhale: 'Einatmen',
+                breathing_hold: 'Halten',
+                breathing_exhale: 'Ausatmen',
+                breathing_paused: 'Pausiert',
+                scanner_scan_complete: 'Geführter Scan abgeschlossen.',
+                scanner_scan_stopped: 'Scan gestoppt. Tippen Sie auf einen Körperteil, um sich zu konzentrieren.',
+            },
+            // Arabic (ar)
+            ar: {
+                co2_title: 'منظم توازن ثاني أكسيد الكربون',
+                co2_subtitle: 'واجه فرط التنفس بالتنفس الموجه.',
+                premium_feature: 'ميزة مميزة',
+                inhale_label: 'شهيق (ث)',
+                hold_label: 'حبس (ث)',
+                exhale_label: 'زفير (ث)',
+                upgrade_breathing: 'قم بالترقية لتخصيص أوقات التنفس.',
+                start_breathing_button: 'ابدأ تنفس ٤-٤-٦',
+                try_scanner: 'جرب الماسح العضلي الجسدي →',
+                scanner_title: 'الماسح العضلي الجسدي',
+                scanner_subtitle: 'تخلص من التوتر بالاسترخاء الموجه.',
+                scanner_instruction_initial: 'اضغط على جزء من الجسم أو ابدأ المسح الموجه.',
+                select_voice: 'اختر الصوت:',
+                start_guided_scan: 'ابدأ المسح الموجه',
+                stop_scan: 'إيقاف المسح',
+                back_to_pacer: '→ العودة إلى منظم توازن ثاني أكسيد الكربون',
+                upgrade_title: 'الترقية إلى المميز',
+                upgrade_subtitle: 'افتح ميزات قوية لتعزيز رحلة الاسترخاء الخاصة بك.',
+                feature_breathing: '<b>أوقات تنفس مخصصة:</b> اضبط مدد الشهيق والحبس والزفير لتناسب مستوى راحتك.',
+                feature_sessions: '<b>جلسات موجهة أكثر:</b> الوصول إلى مكتبة من تمارين الاسترخاء والتأمل المتخصصة.',
+                feature_progress: '<b>تتبع تقدمك:</b> راقب جلساتك وشاهد ثباتك بمرور الوقت.',
+                upgrade_now: 'الترقية الآن',
+                maybe_later: 'ربما لاحقًا',
+                breathing_ready: 'جاهز',
+                breathing_inhale: 'شهيق',
+                breathing_hold: 'احبس',
+                breathing_exhale: 'زفير',
+                breathing_paused: 'متوقف مؤقتًا',
+                scanner_scan_complete: 'اكتمل المسح الموجه.',
+                scanner_scan_stopped: 'توقف المسح. اضغط على جزء من الجسم للتركيز.',
+            },
+            // Italian (it)
+            it: {
+                co2_title: 'Pacer Equilibrio CO₂',
+                co2_subtitle: 'Contrasta l\'iperventilazione con la respirazione guidata.',
+                premium_feature: 'FUNZIONE PREMIUM',
+                inhale_label: 'Inspira (s)',
+                hold_label: 'Trattieni (s)',
+                exhale_label: 'Espira (s)',
+                upgrade_breathing: 'Esegui l\'upgrade per personalizzare i tempi di respirazione.',
+                start_breathing_button: 'Inizia Respirazione 4-4-6',
+                try_scanner: 'Prova lo Scanner Muscolare Somatico →',
+                scanner_title: 'Scanner Muscolare Somatico',
+                scanner_subtitle: 'Rilascia la tensione con il rilassamento guidato.',
+                scanner_instruction_initial: 'Tocca una parte del corpo o avvia la scansione guidata.',
+                select_voice: 'Seleziona Voce:',
+                start_guided_scan: 'Avvia Scansione Guidata',
+                stop_scan: 'Ferma Scansione',
+                back_to_pacer: '← Torna al Pacer Equilibrio CO₂',
+                upgrade_title: 'Passa a Premium',
+                upgrade_subtitle: 'Sblocca potenti funzionalità per migliorare il tuo percorso di rilassamento.',
+                feature_breathing: '<b>Tempi di respirazione personalizzati:</b> Regola le durate di inspirazione, trattenimento ed espirazione per adattarle al tuo livello di comfort.',
+                feature_sessions: '<b>Più sessioni guidate:</b> Accedi a una libreria di esercizi specializzati di rilassamento e meditazione.',
+                feature_progress: '<b>Traccia i tuoi progressi:</b> Monitora le tue sessioni e osserva la tua costanza nel tempo.',
+                upgrade_now: 'Aggiorna Ora',
+                maybe_later: 'Forse più tardi',
+                breathing_ready: 'Pronto',
+                breathing_inhale: 'Inspira',
+                breathing_hold: 'Trattieni',
+                breathing_exhale: 'Espira',
+                breathing_paused: 'In pausa',
+                scanner_scan_complete: 'Scansione guidata completata.',
+                scanner_scan_stopped: 'Scansione interrotta. Tocca una parte del corpo per concentrarti.',
+            },
+            // Russian (ru)
+            ru: {
+                co2_title: 'CO₂ Баланс-Пейсер',
+                co2_subtitle: 'Противодействуйте гипервентиляции с помощью управляемого дыхания.',
+                premium_feature: 'ПРЕМИУМ-ФУНКЦИЯ',
+                inhale_label: 'Вдох (с)',
+                hold_label: 'Задержка (с)',
+                exhale_label: 'Выдох (с)',
+                upgrade_breathing: 'Обновитесь, чтобы настроить время дыхания.',
+                start_breathing_button: 'Начать дыхание 4-4-6',
+                try_scanner: 'Попробуйте Соматический Сканер Мышц →',
+                scanner_title: 'Соматический Сканер Мышц',
+                scanner_subtitle: 'Снимите напряжение с помощью управляемой релаксации.',
+                scanner_instruction_initial: 'Коснитесь части тела или начните управляемое сканирование.',
+                select_voice: 'Выберите Голос:',
+                start_guided_scan: 'Начать Управляемое Сканирование',
+                stop_scan: 'Остановить Сканирование',
+                back_to_pacer: '← Назад к CO₂ Баланс-Пейсеру',
+                upgrade_title: 'Обновиться до Премиум',
+                upgrade_subtitle: 'Откройте мощные функции для улучшения вашего пути релаксации.',
+                feature_breathing: '<b>Настраиваемое время дыхания:</b> Настройте продолжительность вдоха, задержки и выдоха в соответствии с вашим уровнем комфорта.',
+                feature_sessions: '<b>Больше управляемых сеансов:</b> Получите доступ к библиотеке специализированных упражнений по релаксации и медитации.',
+                feature_progress: '<b>Отслеживайте свой прогресс:</b> Контролируйте свои сеансы и следите за своей последовательностью с течением времени.',
+                upgrade_now: 'Обновиться Сейчас',
+                maybe_later: 'Может быть, позже',
+                breathing_ready: 'Готов',
+                breathing_inhale: 'Вдох',
+                breathing_hold: 'Задержка',
+                breathing_exhale: 'Выдох',
+                breathing_paused: 'Пауза',
+                scanner_scan_complete: 'Управляемое сканирование завершено.',
+                scanner_scan_stopped: 'Сканирование остановлено. Коснитесь части тела, чтобы сфокусироваться.',
+            },
+            // Spanish (es)
+            es: {
+                co2_title: 'Regulador de Equilibrio de CO₂',
+                co2_subtitle: 'Contrarresta la hiperventilación con respiración guiada.',
+                premium_feature: 'FUNCIÓN PREMIUM',
+                inhale_label: 'Inhalar (s)',
+                hold_label: 'Sostener (s)',
+                exhale_label: 'Exhalar (s)',
+                upgrade_breathing: 'Actualiza para personalizar los tiempos de respiración.',
+                start_breathing_button: 'Iniciar Respiración 4-4-6',
+                try_scanner: 'Prueba el Escáner Muscular Somático →',
+                scanner_title: 'Escáner Muscular Somático',
+                scanner_subtitle: 'Libera la tensión con relajación guiada.',
+                scanner_instruction_initial: 'Toca una parte del cuerpo o inicia el escaneo guiado.',
+                select_voice: 'Seleccionar Voz:',
+                start_guided_scan: 'Iniciar Escaneo Guiado',
+                stop_scan: 'Detener Escaneo',
+                back_to_pacer: '← Volver al Regulador de CO₂',
+                upgrade_title: 'Actualizar a Premium',
+                upgrade_subtitle: 'Desbloquea potentes funciones para mejorar tu viaje de relajación.',
+                feature_breathing: '<b>Tiempos de respiración personalizados:</b> Ajusta la duración de la inhalación, la retención y la exhalación para que coincida con tu nivel de comodidad.',
+                feature_sessions: '<b>Más sesiones guiadas:</b> Accede a una biblioteca de ejercicios especializados de relajación y meditación.',
+                feature_progress: '<b>Sigue tu progreso:</b> Supervisa tus sesiones y observa tu constancia a lo largo del tiempo.',
+                upgrade_now: 'Actualizar Ahora',
+                maybe_later: 'Quizás más tarde',
+                breathing_ready: 'Listo',
+                breathing_inhale: 'Inhala',
+                breathing_hold: 'Sostén',
+                breathing_exhale: 'Exhala',
+                breathing_paused: 'En pausa',
+                scanner_scan_complete: 'Escaneo guiado completo.',
+                scanner_scan_stopped: 'Escaneo detenido. Toca una parte del cuerpo para enfocar.',
+            }
+        };
+
+        function setLanguage(lang) {
+            currentLang = translations[lang] ? lang : 'en';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+            document.querySelectorAll('[data-translate]').forEach(el => {
+                const key = el.getAttribute('data-translate');
+                if (translations[currentLang][key]) {
+                    el.innerHTML = translations[currentLang][key];
+                }
+            });
+            // Also update dynamic text fields to their initial state
+            updateDynamicText('breathing_ready');
+            updateDynamicText('start_breathing_button');
+            updateDynamicText('scanner_instruction_initial');
+        }
+
+        function updateDynamicText(key, replacements = {}) {
+             if (!translations[currentLang] || !translations[currentLang][key]) return;
+            let text = translations[currentLang][key];
+            
+            const element = document.querySelector(`[data-translate-dynamic="${key}"]`);
+            if(element) element.textContent = text;
+        }
+
+
+        // Listen for messages from FlutterFlow
+        window.addEventListener("message", (event) => {
+            // A basic security check
+            // if (event.origin !== "YOUR_APP_DOMAIN") return;
+            
+            if (event.data.type === 'SET_LANGUAGE') {
+                setLanguage(event.data.payload);
+                populateVoiceList(); // Repopulate voices for the new language
+            }
+            if (event.data.type === 'SET_PREMIUM') {
+                isPremium = event.data.payload;
+                // If the user becomes premium, unlock features visually
+                if (isPremium) {
+                    unlockPremiumVisuals();
+                }
+                populateVoiceList(); // Repopulate voices based on premium status
+            }
+        });
+
+        // --- Page Navigation ---
+        const page1 = document.getElementById('page1');
+        const page2 = document.getElementById('page2');
+        function showPage(pageId) {
+            stopAllActivities();
+            if (pageId === 'page1') {
+                page1.classList.remove('hidden');
+                page2.classList.add('hidden');
+            } else {
+                page1.classList.add('hidden');
+                page2.classList.remove('hidden');
+            }
+        }
+
+        function stopAllActivities() {
+            if(isBreathing) {
+                stopBreathing();
+            }
+            if(!stopScanBtn.classList.contains('hidden')) {
+                stopScanBtn.click();
+            }
+        }
+        
+        // --- Modal Logic ---
+        const upgradeModal = document.getElementById('upgrade-modal');
+        const modalContent = document.getElementById('modal-content');
+        const closeModalButton = document.getElementById('close-modal-button');
+        const premiumFeatureLock = document.getElementById('premium-feature-lock');
+        const upgradeNowButton = document.getElementById('upgrade-now-button');
+
+        function openModal() {
+            upgradeModal.classList.remove('hidden');
+            setTimeout(() => { modalContent.style.transform = 'scale(1)'; modalContent.style.opacity = '1'; }, 10);
+        }
+        function closeModal() {
+            upgradeModal.classList.add('hidden');
+        }
+
+        function unlockPremiumVisuals() {
+            const breathingControls = document.getElementById('breathing-controls');
+            const upgradePromptText = document.getElementById('upgrade-prompt-text');
+            
+            inhaleTimeInput.disabled = false;
+            holdTimeInput.disabled = false;
+            exhaleTimeInput.disabled = false;
+            
+            if (breathingControls) breathingControls.classList.remove('opacity-40');
+            if (upgradePromptText) upgradePromptText.style.display = 'none';
+            
+            premiumFeatureLock.removeEventListener('click', openModal);
+            premiumFeatureLock.style.cursor = 'default';
+        }
+
+        function unlockPremiumFeaturesForTest() {
+            isPremium = true;
+            unlockPremiumVisuals();
+            populateVoiceList();
+            closeModal();
+            console.log("TEST MODE: Premium features unlocked for this session.");
+        }
+
+        premiumFeatureLock.addEventListener('click', openModal);
+        closeModalButton.addEventListener('click', closeModal);
+        upgradeNowButton.addEventListener('click', unlockPremiumFeaturesForTest);
+        upgradeModal.addEventListener('click', (e) => {
+            if (e.target === upgradeModal) {
+                closeModal();
+            }
+        });
+
+        // --- Page 1: CO₂ Balance Pacer Logic ---
+        const breathingCircle = document.getElementById('breathing-circle');
+        const breathingText = document.getElementById('breathing-text');
+        const startButton = document.getElementById('start-button');
+        const inhaleTimeInput = document.getElementById('inhale-time');
+        const holdTimeInput = document.getElementById('hold-time');
+        const exhaleTimeInput = document.getElementById('exhale-time');
+
+        let isBreathing = false;
+        let breathInterval, breathTimeout1, breathTimeout2;
+
+        function vibrate(duration) {
+            if (navigator.vibrate) navigator.vibrate(duration);
+        }
+
+        function stopBreathing() {
+            isBreathing = false;
+            clearTimeout(breathInterval);
+            if (breathTimeout1) clearTimeout(breathTimeout1);
+            if (breathTimeout2) clearTimeout(breathTimeout2);
+
+            breathingCircle.style.transitionDuration = '0.5s';
+            breathingCircle.style.transform = 'scale(1)';
+            breathingCircle.style.boxShadow = '0 0 0 10px rgba(59, 130, 246, 0.3)';
+            startButton.textContent = translations[currentLang].start_breathing_button;
+            breathingText.textContent = translations[currentLang].breathing_paused;
+        }
+
+        function runBreathingCycle() {
+            if (!isBreathing) return;
+            const inhale = parseInt(inhaleTimeInput.value) * 1000;
+            const hold = parseInt(holdTimeInput.value) * 1000;
+            const exhale = parseInt(exhaleTimeInput.value) * 1000;
+            const totalTime = inhale + hold + exhale;
+            
+            breathingCircle.style.transitionDuration = `${inhale / 1000}s`;
+            breathingText.textContent = translations[currentLang].breathing_inhale;
+            breathingCircle.style.transform = 'scale(2.5)';
+            breathingCircle.style.boxShadow = '0 0 40px 10px rgba(99, 102, 241, 0.5)';
+            vibrate(100);
+
+            breathTimeout1 = setTimeout(() => {
+                if (!isBreathing) return;
+                breathingText.textContent = translations[currentLang].breathing_hold;
+            }, inhale);
+
+            breathTimeout2 = setTimeout(() => {
+                if (!isBreathing) return;
+                breathingCircle.style.transitionDuration = `${exhale / 1000}s`;
+                breathingText.textContent = translations[currentLang].breathing_exhale;
+                breathingCircle.style.transform = 'scale(1)';
+                breathingCircle.style.boxShadow = '0 0 0 10px rgba(59, 130, 246, 0.3)';
+                vibrate(100);
+            }, inhale + hold);
+            
+            breathInterval = setTimeout(runBreathingCycle, totalTime);
+        }
+
+        startButton.addEventListener('click', () => {
+            if (isBreathing) {
+                stopBreathing();
+            } else {
+                isBreathing = true;
+                startButton.textContent = translations[currentLang].stop_scan; // "Stop" is universal enough
+                runBreathingCycle();
+            }
+        });
+
+        // --- Page 2: Somatic Muscle Scanner Logic ---
+        const instructionEl = document.getElementById('scanner-instruction');
+        const startScanBtn = document.getElementById('start-scan-button');
+        const stopScanBtn = document.getElementById('stop-scan-button');
+        const svgBody = document.getElementById('human-body-svg');
+        let synth = window.speechSynthesis;
+        let scanTimeout;
+        let currentUtterance = null;
+        const voiceSelect = document.getElementById('voice-select');
+        let voices = [];
+
+        function populateVoiceList() {
+            voices = synth.getVoices();
+            if (voices.length === 0) {
+                setTimeout(populateVoiceList, 100); // Retry if voices not loaded
+                return;
+            }
+            voiceSelect.innerHTML = '';
+            
+            let voicesToShow = [];
+
+            if (isPremium) {
+                const premiumLangs = ['en', 'sk', 'hu', 'de', 'ar', 'it', 'ru', 'es'];
+                voicesToShow = voices.filter(voice => 
+                    premiumLangs.some(lang => voice.lang.startsWith(lang))
+                );
+            } else {
+                // Free user: find one English voice
+                let engVoice = voices.find(voice => voice.lang.startsWith('en') && voice.default) || voices.find(voice => voice.lang.startsWith('en'));
+                if (engVoice) {
+                    voicesToShow.push(engVoice);
+                }
+            }
+            
+            voicesToShow.forEach(voice => {
+                const option = document.createElement('option');
+                option.textContent = `${voice.name} (${voice.lang})`;
+                option.setAttribute('data-lang', voice.lang);
+                option.setAttribute('data-name', voice.name);
+                voiceSelect.appendChild(option);
+            });
+
+            // Auto-select a voice matching current language if possible
+             if (voiceSelect.options.length > 0) {
+                let selected = false;
+                for (let i = 0; i < voiceSelect.options.length; i++) {
+                    if (voiceSelect.options[i].getAttribute('data-lang').startsWith(currentLang)) {
+                        voiceSelect.selectedIndex = i;
+                        selected = true;
+                        break;
+                    }
+                }
+                if (!selected) voiceSelect.selectedIndex = 0;
+            }
+        }
+        
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = populateVoiceList;
+        }
+        populateVoiceList();
+
+
+        const bodyParts = [
+             { id: 'right_hand', key: 'text_right_hand' },
+             { id: 'left_hand', key: 'text_left_hand' },
+             { id: 'right_arm', key: 'text_right_arm' },
+             { id: 'left_arm', key: 'text_left_arm' },
+             { id: 'head', key: 'text_head' },
+             { id: 'torso', key: 'text_torso' },
+             { id: 'right_leg', key: 'text_right_leg' },
+             { id: 'left_leg', key: 'text_left_leg' },
+             { id: 'right_foot', key: 'text_right_foot' },
+             { id: 'left_foot', key: 'text_left_foot' },
+        ];
+        
+        Object.assign(translations.en, {
+            text_right_hand: "Focus on your right hand. Squeeze it into a fist for five seconds... Now, release and feel the tension melt away.",
+            text_left_hand: "Now your left hand. Curl it into a tight fist... Hold it... And release. Notice the difference.",
+            text_right_arm: "Bring your attention to your right arm. Tense your bicep... hold... and let it go completely limp.",
+            text_left_arm: "Focus on your left arm. Tense the muscles... now relax and feel the softness return.",
+            text_head: "Now, your face. Scrunch up your forehead and clench your jaw... hold... and release. Let your jaw hang loose.",
+            text_torso: "Pull your shoulders to your ears. Feel the tension in your neck and back... and now let them drop.",
+            text_right_leg: "Tense the muscles in your right thigh and calf... Squeeze tightly... And now, release everything.",
+            text_left_leg: "Focus on your left leg. Tense it from your hip to your toes... Hold... and let go completely.",
+            text_right_foot: "Curl the toes on your right foot... feel the arch tighten... and release.",
+            text_left_foot: "Finally, your left foot. Curl your toes tightly... hold... and relax. Feel the warmth as the tension leaves."
+        });
+        // NOTE: Translated body part text would be added to each language object here.
+
+        function getBodyPartText(partKey) {
+            return translations[currentLang][partKey] || translations.en[partKey];
+        }
+
+
+        function speakAndHighlight(partId) {
+            if (synth.speaking) synth.cancel();
+            
+            const partInfo = bodyParts.find(p => p.id === partId);
+            if (!partInfo) return;
+            const partText = getBodyPartText(partInfo.key);
+
+            document.querySelectorAll('.body-part').forEach(el => el.classList.remove('active'));
+            const svgPart = document.querySelector(`[data-part="${partId}"]`);
+            if (svgPart) svgPart.classList.add('active');
+            instructionEl.textContent = partText;
+
+            let utterance = new SpeechSynthesisUtterance(partText);
+            const selectedOption = voiceSelect.selectedOptions[0];
+            if (selectedOption) {
+                const selectedVoiceName = selectedOption.getAttribute('data-name');
+                utterance.voice = voices.find(voice => voice.name === selectedVoiceName);
+            }
+
+            utterance.onend = () => {
+                 if (svgPart) svgPart.classList.remove('active');
+                 currentUtterance = null;
+            };
+            currentUtterance = utterance;
+            synth.speak(utterance);
+        }
+
+        function runGuidedScan(index = 0) {
+            if (index >= bodyParts.length) {
+                instructionEl.textContent = translations[currentLang].scanner_scan_complete;
+                startScanBtn.classList.remove('hidden');
+                stopScanBtn.classList.add('hidden');
+                document.querySelectorAll('.body-part').forEach(el => el.classList.remove('active'));
+                return;
+            }
+            const partInfo = bodyParts[index];
+            speakAndHighlight(partInfo.id);
+            
+            const utterance = currentUtterance;
+            if (utterance) {
+                utterance.onend = () => {
+                     const svgPart = document.querySelector(`[data-part="${partInfo.id}"]`);
+                     if(svgPart) svgPart.classList.remove('active');
+                     scanTimeout = setTimeout(() => runGuidedScan(index + 1), 3000); 
+                }
+            } else {
+                 scanTimeout = setTimeout(() => runGuidedScan(index + 1), 10000);
+            }
+        }
+
+        startScanBtn.addEventListener('click', () => {
+            startScanBtn.classList.add('hidden');
+            stopScanBtn.classList.remove('hidden');
+            runGuidedScan();
+        });
+
+        stopScanBtn.addEventListener('click', () => {
+            clearTimeout(scanTimeout);
+            synth.cancel();
+            currentUtterance = null;
+            startScanBtn.classList.remove('hidden');
+            stopScanBtn.classList.add('hidden');
+            document.querySelectorAll('.body-part').forEach(el => el.classList.remove('active'));
+            instructionEl.textContent = translations[currentLang].scanner_scan_stopped;
+        });
+
+        svgBody.addEventListener('click', (e) => {
+            if (e.target.classList.contains('body-part')) {
+                clearTimeout(scanTimeout);
+                if(!stopScanBtn.classList.contains('hidden')){
+                    startScanBtn.classList.remove('hidden');
+                    stopScanBtn.classList.add('hidden');
+                }
+                speakAndHighlight(e.target.dataset.part);
+            }
+        });
+
+        // Set default language on load
+        setLanguage('en');
+    </script>
+</body>
+</html>
+
